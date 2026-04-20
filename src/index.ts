@@ -9,8 +9,7 @@ import { dashboardResults, dashboardSummary } from "./dashboard"
 async function run(): Promise<void> {
     try {
         const pathGlobs = core.getInput("paths", { required: true })
-        const outputFile =
-            core.getInput("output") || process.env.GITHUB_STEP_SUMMARY || "-"
+        const outputFile = core.getInput("output") || process.env.GITHUB_STEP_SUMMARY || "-"
         const showList = core.getInput("show")
 
         /*
@@ -40,12 +39,7 @@ async function run(): Promise<void> {
                     continue
                 }
 
-                const showValue = (TestStatus as any)[
-                    showName.replace(
-                        /^([a-z])(.*)/,
-                        (m, p1, p2) => p1.toUpperCase() + p2
-                    )
-                ]
+                const showValue = (TestStatus as any)[showName.replace(/^([a-z])(.*)/, (m, p1, p2) => p1.toUpperCase() + p2)]
 
                 if (!showValue) {
                     throw new Error(`unknown test type: ${showName}`)
@@ -66,9 +60,7 @@ async function run(): Promise<void> {
                 core.debug(`: ${path}`)
             }
 
-            core.debug(
-                `Output file: ${outputFile === "-" ? "(stdout)" : outputFile}`
-            )
+            core.debug(`Output file: ${outputFile === "-" ? "(stdout)" : outputFile}`)
 
             let showInfo = "Tests to show:"
             if (show === TestStatus.None) {
@@ -120,10 +112,7 @@ async function run(): Promise<void> {
         core.setOutput("passed", total.counts.passed)
         core.setOutput("failed", total.counts.failed)
         core.setOutput("skipped", total.counts.skipped)
-        core.setOutput(
-            "total",
-            total.counts.passed + total.counts.failed + total.counts.skipped
-        )
+        core.setOutput("total", total.counts.passed + total.counts.failed + total.counts.skipped)
     } catch (error) {
         if (error instanceof Error) {
             core.setFailed(error.message)
