@@ -388,7 +388,7 @@ function parseTap(data) {
             let name = undefined;
             let description = undefined;
             let details = undefined;
-            if ((found = line.match(/^\s*#(.*)/))) {
+            if (found = line.match(/^\s*#(.*)/)) {
                 if (!found[1]) {
                     continue;
                 }
@@ -407,34 +407,34 @@ function parseTap(data) {
                     suitename = found[1].trim();
                 continue;
             }
-            else if ((found = line.match(/^ok(?:\s+(\d+))?\s*-?\s*([^#]*?)\s*#\s*[Ss][Kk][Ii][Pp]\S*(?:\s+(.*?)\s*)?$/))) {
+            else if (found = line.match(/^ok(?:\s+(\d+))?\s*-?\s*([^#]*?)\s*#\s*[Ss][Kk][Ii][Pp]\S*(?:\s+(.*?)\s*)?$/)) {
                 num = parseInt(found[1]);
                 status = TestStatus.Skip;
-                name = found[2] && found[2].length > 0 ? found[2] : undefined;
+                name = (found[2] && found[2].length > 0) ? found[2] : undefined;
                 description = found[3];
                 counts.skipped++;
             }
-            else if ((found = line.match(/^ok(?:\s+(\d+))?\s*-?\s*(?:(.*?)\s*)?$/))) {
+            else if (found = line.match(/^ok(?:\s+(\d+))?\s*-?\s*(?:(.*?)\s*)?$/)) {
                 num = parseInt(found[1]);
                 status = TestStatus.Pass;
                 name = found[2];
                 counts.passed++;
             }
-            else if ((found = line.match(/^not ok(?:\s+(\d+))?\s*-?\s*([^#]*?)\s*#\s*[Tt][Oo][Dd][Oo](?:\s+(.*?)\s*)?$/))) {
+            else if (found = line.match(/^not ok(?:\s+(\d+))?\s*-?\s*([^#]*?)\s*#\s*[Tt][Oo][Dd][Oo](?:\s+(.*?)\s*)?$/)) {
                 num = parseInt(found[1]);
                 status = TestStatus.Skip;
-                name = found[2] && found[2].length > 0 ? found[2] : undefined;
+                name = (found[2] && found[2].length > 0) ? found[2] : undefined;
                 description = found[3];
                 counts.skipped++;
             }
-            else if ((found = line.match(/^not ok(?:\s+(\d+))?\s*-?\s*-?\s*(?:(.*?)\s*)?$/))) {
+            else if (found = line.match(/^not ok(?:\s+(\d+))?\s*-?\s*-?\s*(?:(.*?)\s*)?$/)) {
                 num = parseInt(found[1]);
                 status = TestStatus.Fail;
                 name = found[2];
                 counts.failed++;
             }
             else if (line.match(/^Bail out\!/)) {
-                const message = line.match(/^Bail out\!(.*)/);
+                const message = (line.match(/^Bail out\!(.*)/));
                 if (message) {
                     exception = message[1].trim();
                 }
@@ -457,10 +457,10 @@ function parseTap(data) {
             else if (num > testMax) {
                 testMax = num;
             }
-            if (i + 1 < lines.length && lines[i + 1].match(/^  ---$/)) {
+            if ((i + 1) < lines.length && lines[i + 1].match(/^  ---$/)) {
                 i++;
                 while (i < lines.length && !lines[i + 1].match(/^  \.\.\.$/)) {
-                    const detail = lines[i + 1].match(/^  (.*)/);
+                    const detail = (lines[i + 1].match(/^  (.*)/));
                     if (!detail) {
                         throw new Error("invalid yaml in test case details");
                     }
@@ -499,10 +499,10 @@ function parseTap(data) {
 function parseJunitXml(xml) {
     return __awaiter(this, void 0, void 0, function* () {
         let testsuites;
-        if ("testsuites" in xml) {
+        if ('testsuites' in xml) {
             testsuites = xml.testsuites.testsuite || [];
         }
-        else if ("testsuite" in xml) {
+        else if ('testsuite' in xml) {
             testsuites = [xml.testsuite];
         }
         else {
@@ -535,10 +535,11 @@ function parseJunitXml(xml) {
                     status = TestStatus.Skip;
                     counts.skipped++;
                 }
-                else if ((failure_or_error = testcase.failure || testcase.error)) {
+                else if (failure_or_error = testcase.failure || testcase.error) {
                     status = TestStatus.Fail;
                     const element = failure_or_error[0];
                     message = element.$ ? element.$.message : undefined;
+                    details = element._;
                     if (typeof element === "string") {
                         details = element;
                     }
