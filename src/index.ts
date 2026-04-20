@@ -9,7 +9,8 @@ import { dashboardResults, dashboardSummary } from "./dashboard"
 async function run(): Promise<void> {
     try {
         const pathGlobs = core.getInput("paths", { required: true })
-        const outputFile = core.getInput("output") || process.env.GITHUB_STEP_SUMMARY || "-"
+        const outputFile =
+            core.getInput("output") || process.env.GITHUB_STEP_SUMMARY || "-"
         const showList = core.getInput("show")
 
         /*
@@ -17,11 +18,11 @@ async function run(): Promise<void> {
          * a path glob (eg "**TEST-*.xml"), or may be newline separated
          * (from a multi-line yaml scalar).
          */
-        const paths = [ ]
+        const paths = []
 
         for (const path of pathGlobs.split(/\r?\n/)) {
             if (glob.hasMagic(path)) {
-                paths.push(...await glob.promise(path))
+                paths.push(...(await glob.promise(path)))
             } else {
                 paths.push(path.trim())
             }
@@ -29,7 +30,7 @@ async function run(): Promise<void> {
 
         let show = TestStatus.Fail
         if (showList) {
-            show = 0
+            show = TestStatus.None
 
             for (const showName of showList.split(/,\s*/)) {
                 if (showName === "none") {
@@ -39,7 +40,12 @@ async function run(): Promise<void> {
                     continue
                 }
 
-                const showValue = (TestStatus as any)[showName.replace(/^([a-z])(.*)/, (m, p1, p2) => p1.toUpperCase() + p2)]
+                const showValue = (TestStatus as any)[
+                    showName.replace(
+                        /^([a-z])(.*)/,
+                        (m, p1, p2) => p1.toUpperCase() + p2
+                    )
+                ]
 
                 if (!showValue) {
                     throw new Error(`unknown test type: ${showName}`)
@@ -60,10 +66,12 @@ async function run(): Promise<void> {
                 core.debug(`: ${path}`)
             }
 
-            core.debug(`Output file: ${outputFile === '-' ? "(stdout)" : outputFile}`)
+            core.debug(
+                `Output file: ${outputFile === "-" ? "(stdout)" : outputFile}`
+            )
 
             let showInfo = "Tests to show:"
-            if (show === 0) {
+            if (show === TestStatus.None) {
                 showInfo += " none"
             }
             for (const showName in TestStatus) {
@@ -80,7 +88,7 @@ async function run(): Promise<void> {
 
         const total: TestResult = {
             counts: { passed: 0, failed: 0, skipped: 0 },
-            suites: [ ],
+            suites: [],
             exception: undefined
         }
 
@@ -109,10 +117,13 @@ async function run(): Promise<void> {
             await writefile(outputFile, output)
         }
 
-        core.setOutput('passed', total.counts.passed)
-        core.setOutput('failed', total.counts.failed)
-        core.setOutput('skipped', total.counts.skipped)
-        core.setOutput('total', total.counts.passed + total.counts.failed + total.counts.skipped)
+        core.setOutput("passed", total.counts.passed)
+        core.setOutput("failed", total.counts.failed)
+        core.setOutput("skipped", total.counts.skipped)
+        core.setOutput(
+            "total",
+            total.counts.passed + total.counts.failed + total.counts.skipped
+        )
     } catch (error) {
         if (error instanceof Error) {
             core.setFailed(error.message)
