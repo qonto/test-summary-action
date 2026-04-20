@@ -539,7 +539,6 @@ function parseJunitXml(xml) {
                     status = TestStatus.Fail;
                     const element = failure_or_error[0];
                     message = element.$ ? element.$.message : undefined;
-                    details = element._;
                     if (typeof element === "string") {
                         details = element;
                     }
